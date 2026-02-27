@@ -1,10 +1,8 @@
-import { db } from "../config/db.js";
+import { db } from "../config/db.js"; // Connexion à la base de données
 
-
-// Création d'un utilisateur.
 export const userRepository = {
 
-  // Création d'un utilisateur
+  // Création d'un utilisateur dans la base de données
   async create(user) {
     const [result] = await db.execute(
       `INSERT INTO users (email, password, verification_token)
@@ -12,20 +10,19 @@ export const userRepository = {
       [user.email, user.password, user.verificationToken]
     );
 
+    // Retourne l'ID de l'utilisateur créé
     return result.insertId;
   },
 
-
-  // Trouver un utilisateur par rapport à son email
+  // Trouver un utilisateur par email
   async findByEmail(email) {
     const [rows] = await db.execute(
       `SELECT * FROM users WHERE email = ?`,
       [email]
     );
 
-    return rows[0];
+    return rows[0]; // Retourne le premier utilisateur trouvé
   },
-
 
   // Mettre à jour la localisation de l'utilisateur
   async updateLocation(userId, lat, lng) {
@@ -37,8 +34,7 @@ export const userRepository = {
     );
   },
 
-
-  // Récupérer les utilisateurs actifs (actifs depuis 3 minutes)
+  // Récupérer les utilisateurs actifs (connectés récemment)
   async getActiveUsers() {
     const [rows] = await db.execute(
       `SELECT id, email, latitude, longitude

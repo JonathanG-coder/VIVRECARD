@@ -1,23 +1,37 @@
-import { AuthService } from "../services/auth.service.js";
+import { AuthService } from "../services/auth.service.js"; // Service métier pour l'authentification
 
 export const AuthController = {
-    async register (req, res, next) {
-        try{
-            const {email, password} = req.body
-            const userId = await AuthService.register(email, password)
-            res.status(201).json({userId})
+    // Controller pour l'inscription utilisateur
+    async register(req, res, next) {
+        try {
+            // Récupération des données envoyées par le client
+            const { email, password } = req.body;
+
+            // Appel du service d'inscription
+            const userId = await AuthService.register(email, password);
+
+            // Réponse HTTP : utilisateur créé
+            res.status(201).json({ userId });
         } catch (error) {
-            next(error)
+            // Transmission de l'erreur au middleware global
+            next(error);
         }
     },
 
+    // Controller pour la connexion utilisateur
     async login(req, res, next) {
-        try{
-            const{email, password} = req.body
-            const token = await AuthService.login(email, password)
-            res.statut(200).json({token})
-        } catch (error){
-            next(error)
+        try {
+            // Récupération des données envoyées par le client
+            const { email, password } = req.body;
+
+            // Appel du service de login
+            const token = await AuthService.login(email, password);
+            
+             // Réponse HTTP : utilisateur connecté
+            res.status(200).json({ token });
+        } catch (error) {
+            // Gestion de l'erreur via middleware global
+            next(error);
         }
     }
-}
+};
