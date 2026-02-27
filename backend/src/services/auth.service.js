@@ -8,6 +8,12 @@ import { MailService } from "./mail.service.js"; // Service d'envoi d’emails
 export const AuthService = {
   // Inscription utilisateur
   async register(email, password) {
+    // Verifie si Email deja utilisé
+    const existing = await userRepository.findByEmail(email);
+    if (existing) {
+      throw new Error("Email déjà utilisé");
+    }
+
     // Hash du mot de passe avec Argon2 (très sécurisé)
     const hashed = await argon2.hash(password);
 
@@ -49,7 +55,7 @@ export const AuthService = {
         id: user.id,
       },
       env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
   },
 };
