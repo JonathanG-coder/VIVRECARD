@@ -1,6 +1,8 @@
 import express from "express"
 import { env } from "./src/config/env.js"
 import { db } from "./src/config/db.js"
+import {MailService} from "./src/services/mail.service.js"
+
 
 const app = express()
 const PORT = env.PORT
