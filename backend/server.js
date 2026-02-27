@@ -1,13 +1,8 @@
-import express from "express"
-import { env } from "./src/config/env.js"
-import { db } from "./src/config/db.js"
-import {MailService} from "./src/services/mail.service.js"
+import { env } from "./src/config/env.js";
+import app from "./src/app.js";
 
-
-const app = express()
-const PORT = env.PORT
+const PORT = env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`Serveur tourne sur localhost:${PORT}`);
-
-})
+  console.log(`Serveur tourne sur localhost:${PORT}`);
+});
