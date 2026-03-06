@@ -34,7 +34,7 @@ export const userRepository = {
     );
   },
 
-  // Récupérer les utilisateurs actifs (connectés récemment)
+  // Récupérer les utilisateurs actifs chaque 3 minutes pour le moement(connectés récemment)
   async getActiveUsers() {
     const [rows] = await db.execute(
       `SELECT id, email, latitude, longitude

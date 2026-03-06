@@ -4,6 +4,7 @@ import helmet from "helmet"; // Sécurise les headers HTTP
 import rateLimit from "express-rate-limit"; // Limite les requêtes (anti-spam / brute force)
 import { errorHandle } from "./middlewares/error.middleware.js"; // Middleware global d'erreurs
 import  authRoutes  from "./routes/auth.routes.js"; // Routes d'authentification
+import userRoutes from "./routes/user.route.js"
 
 const app = express(); // Création de l'application Express
 
@@ -26,6 +27,9 @@ app.use(
 
 // Routes d'authentification
 app.use("/api/auth", authRoutes);
+
+// Routes pour les users
+app.use("/api/users", userRoutes);
 
 // Middleware global de gestion des erreurs (toujours en dernier)
 app.use(errorHandle);
