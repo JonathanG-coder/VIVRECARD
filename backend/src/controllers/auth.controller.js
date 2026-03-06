@@ -33,5 +33,33 @@ export const AuthController = {
             // Gestion de l'erreur via middleware global
             next(error);
         }
+    },
+
+    async verifyEmail(req, res, next) {
+        try {
+
+        // Récupère le token présent dans l'URL
+        const { token } = req.params;
+
+        // Vérifie le token avec le service d'authentification
+        const user = await AuthService.verifyUser(token);
+
+        // Si le token est invalide ou expiré
+        if (!user) {
+            return res.status(400).json({
+                message: "Token invalide ou expiré"
+            });
+        }
+
+        // Si la vérification réussit
+        res.status(200).json({
+            message: "Email vérifié avec succès"
+        });
+
+     } catch (error) {
+
+        // Envoie l'erreur au middleware global
+        next(error);
     }
+}
 };

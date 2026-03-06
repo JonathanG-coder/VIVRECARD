@@ -26,7 +26,8 @@ export const MailService = {
     // Envoi de l'email de vérification
     async sendVerificationEmail(email, token) {
         // Génération du lien de vérification
-        const link = `${env.CLIENT_URL}/verify/${token}`;
+        const link = `${env.CLIENT_URL}/verify/${token}`;            // En dev sur vercel
+        // const link = `http://localhost:5000/verify/${token}`;    // En local 
 
         // Envoi de l'email via SMTP
         await transporter.sendMail({

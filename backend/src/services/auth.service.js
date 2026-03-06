@@ -1,6 +1,6 @@
 import argon2 from "argon2"; // Bibliothèque pour le hashing sécurisé des mots de passe
 import jwt from "jsonwebtoken"; // Génération des tokens JWT
-import crypto from "crypto"; // Génération de valeurs aléatoires sécurisées
+import crypto, { verify } from "crypto"; // Génération de valeurs aléatoires sécurisées
 import { env } from "../config/env.js"; // Variables d'environnement
 import { userRepository } from "../repositories/user.repository.js"; // Accès aux données utilisateur
 import { MailService } from "./mail.service.js"; // Service d'envoi d’emails
@@ -58,4 +58,31 @@ export const AuthService = {
       { expiresIn: "7d" },
     );
   },
+
+
+  // Service qui vérifie si le token de vérification email existe en base
+  async verifyUser(token){
+
+    // Cherche l'utilisateur avec le token de vérification
+    const user = await userRepository.findByEmail({verificationToken: token})
+
+    // Si aucun utilisateur n'est trouvé, on retourne null
+    if (!user) return null;
+
+    // Marque l'utilisateur comme vérifié
+    user.is_verified = true
+
+    // Supprime le token de vérification après utilisation
+    user.verificationToken = null
+
+    // Sauvegarde les modifications dans la base de données
+    await user.save()
+  }
+
+
+
+
+
+
+
 };
