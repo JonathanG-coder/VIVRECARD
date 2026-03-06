@@ -14,4 +14,4 @@ router.post("/login",validate(loginSchema), AuthController.login);
 
 router.get('/verify/:token', AuthController.verifyEmail)
 
-export default router; // Export du routeur pour l'utiliser dans app.js
+export default router;

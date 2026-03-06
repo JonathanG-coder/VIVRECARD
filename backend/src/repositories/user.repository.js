@@ -24,6 +24,25 @@ export const userRepository = {
     return rows[0]; // Retourne le premier utilisateur trouvé
   },
 
+
+// Chercher un utilisateur avec son token de vérification email
+async findByVerificationToken(token) {
+    const [rows] = await db.execute(
+        'SELECT * FROM users WHERE verification_token = ?',
+        [token]
+    );
+    return rows[0];
+},
+
+// Mettre à jour le statut de vérification de l'utilisateur
+async updateVerification(userId) {
+    await db.execute(
+        'UPDATE users SET is_verified = 1, verification_token = NULL WHERE id = ?',
+        [userId]
+    );
+},
+
+
   // Mettre à jour la localisation de l'utilisateur
   async updateLocation(userId, lat, lng) {
     await db.execute(

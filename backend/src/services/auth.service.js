@@ -59,30 +59,15 @@ export const AuthService = {
     );
   },
 
-
   // Service qui vérifie si le token de vérification email existe en base
-  async verifyUser(token){
-
+  async verifyUser(token) {
     // Cherche l'utilisateur avec le token de vérification
-    const user = await userRepository.findByEmail({verificationToken: token})
-
+    const user = await userRepository.findByVerificationToken(token);
     // Si aucun utilisateur n'est trouvé, on retourne null
     if (!user) return null;
+    // Met à jour le statut de vérification de l'utilisateur
+    await userRepository.updateVerification(user.id);
 
-    // Marque l'utilisateur comme vérifié
-    user.is_verified = true
-
-    // Supprime le token de vérification après utilisation
-    user.verificationToken = null
-
-    // Sauvegarde les modifications dans la base de données
-    await user.save()
-  }
-
-
-
-
-
-
-
+    return user;
+  },
 };
