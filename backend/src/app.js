@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import authRoutes from "./routes/auth.route.js";
+import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.route.js";
 import { errorHandle } from "./middlewares/error.middleware.js";
 import { env } from "./config/env.js";
