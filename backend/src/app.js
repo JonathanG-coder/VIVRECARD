@@ -44,7 +44,7 @@ const limiter = rateLimit({
 
 
 // Appliquer le limiteur global
-// app.use(limiter);
+app.use(limiter);
 
 
 // Route test 
