@@ -1,40 +1,42 @@
-import nodemailer from "nodemailer"; // Bibliothèque pour l'envoi d'emails
-import { env } from "../config/env.js"; // Variables d'environnement
+import nodemailer from "nodemailer";
+import { env } from "../config/env.js";
 
-// Création du transporter SMTP
+// Création du transporteur SMTP sécurisé
 const transporter = nodemailer.createTransport({
-    host: env.SMTP_HOST, // Serveur SMTP
-    port: 587, // Port SMTP standard pour TLS
-    secure: false, // false car on utilise le port 587
-    auth: {
-        user: env.SMTP_USER, // Identifiant SMTP
-        pass: env.SMTP_PASS // Mot de passe SMTP
-    },
+  host: env.SMTP_HOST,
+  port: Number(env.SMTP_PORT),
+  auth: {
+    user: env.SMTP_USER,
+    pass: env.SMTP_PASS,
+  },
 });
 
 // Vérification de la connexion SMTP au démarrage
 transporter.verify((error, success) => {
-    if (error) {
-        console.error("Echec à la connexion au service SMTP");
-    } else {
-        console.log("Connexion SMTP reussie :", success);
-    }
+  if (error) {
+    console.error("Échec connexion SMTP :", error);
+  } else {
+    console.log("Connexion SMTP réussie :", success);
+  }
 });
 
-// Service d'envoi d'emails
+// Service pour envoi des emails
 export const MailService = {
-    // Envoi de l'email de vérification
-    async sendVerificationEmail(email, token) {
-        // Génération du lien de vérification
-        const link = `${env.CLIENT_URL}/verify/${token}`;            // En dev sur vercel
-        // const link = `http://localhost:5000/verify/${token}`;    // En local 
+  async sendVerificationEmail(email, token) {
+    try {
+      const link = `${env.CLIENT_URL}/api/auth/verify/${token}`;
 
-        // Envoi de l'email via SMTP
-        await transporter.sendMail({
-            from: `"VivreCard" <${env.SMTP_SENDER}>`,
-            to: email,
-            subject: "Vérification de votre email",
-            html: `<p>Cliquez sur ce lien pour vérifier votre compte : <a href="${link}">${link}</a></p>`
-        });
+      await transporter.sendMail({
+        from: `"VIVRACARD" <${env.SMTP_SENDER}>`, // Nom et email de l’expéditeur
+        to: email,
+        subject: "Email de vérification",
+        html: `<h1>Bienvenue sur notre application</h1>
+               <p>Veuillez cliquer sur le lien suivant pour vérifier votre email :</p>
+               <a href="${link}" target="_blank" target="_blank">${link}</a>`,
+      });
+    } catch (err) {
+      console.error("Erreur lors de l'envoi de l'email :", err.message);
+      throw new Error("Impossible d'envoyer l'email de vérification");
     }
+  },
 };

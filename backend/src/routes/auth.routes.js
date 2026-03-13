@@ -1,17 +1,16 @@
-import { Router } from "express"; // Création du routeur Express
-import { AuthController } from "../controllers/auth.controller.js"; // Controller d'authentification
-import { loginSchema, registrationSchema } from "../validation/auth.validation.js";
+import { Router } from "express";
+import { AuthController } from "../controllers/auth.controller.js";
 import { validate } from "../middlewares/validation.middleware.js";
+import { loginSchema, registrationSchema } from "../validation/auth.validation.js";
 
-const router = Router(); // Initialisation du routeur
 
-// Route d'inscription
-router.post("/register",validate(registrationSchema), AuthController.register);
+const router = Router()
 
-// Route de connexion
-router.post("/login",validate(loginSchema), AuthController.login);
+router.post('/register',validate(registrationSchema), AuthController.register)
 
+router.post('/login',validate(loginSchema), AuthController.login)
 
 router.get('/verify/:token', AuthController.verifyEmail)
 
-export default router;
+
+export default router

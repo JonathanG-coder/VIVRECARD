@@ -1,12 +1,40 @@
 export class User {
-    // Constructeur du modèle User
-    constructor({ id, email, password, latitude, longitude, is_verified, verification_token }) {
-        this.id = id; // Identifiant unique de l'utilisateur
-        this.email = email; // Email de l'utilisateur
-        this.password = password; // Mot de passe hashé
-        this.latitude = latitude; // Position géographique (latitude)
-        this.longitude = longitude; // Position géographique (longitude)
-        this.is_verified = is_verified; // Statut de vérification de l'email
-        this.verification_token = verification_token || null;
-    }
+  constructor(data = {}) {
+    const {
+      id = null,
+      email = null,
+      password = null,
+      latitude = null,
+      longitude = null,
+      is_verified = false,
+      verification_token = null
+    } = data;
+
+    this.id = id;
+
+    this.email = typeof email === "string" ? email : null;
+
+    this.password = password;
+
+    this.latitude = typeof latitude === "number" ? latitude : null;
+    this.longitude = typeof longitude === "number" ? longitude : null;
+
+    this.is_verified = Boolean(is_verified);
+
+    this.verification_token = verification_token;
+  }
+
+
+  /**
+   * Retourne uniquement les champs safe pour l’API
+   */
+  toJSONSafe() {
+    return {
+      id: this.id,
+      email: this.email,
+      latitude: this.latitude,
+      longitude: this.longitude,
+      is_verified: this.is_verified,
+    };
+  }
 }

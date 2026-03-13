@@ -1,53 +1,53 @@
-import express from "express"; // Framework serveur
-import cors from "cors"; // Autorise les requêtes cross-origin
-import helmet, { contentSecurityPolicy } from "helmet"; // Sécurise les headers HTTP
-import rateLimit from "express-rate-limit"; // Limite les requêtes (anti-spam / brute force)
-import { errorHandle } from "./middlewares/error.middleware.js"; // Middleware global d'erreurs
-import  authRoutes  from "./routes/auth.routes.js"; // Routes d'authentification
-import userRoutes from "./routes/user.route.js"
-import {env} from "./config/env.js"
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
+import { errorHandle } from "./middlewares/error.middleware.js";
+import { env } from "./config/env.js";
 
-const app = express(); // Création de l'application Express
+const app = express();
 
-// Sécurité des headers HTTP
-app.use(helmet(
-  {contentSecurityPolicy: false} // Active en production avec la config adapté
-  //En production on peut l'utiliser en http . Voir si bien a garder ?
-));
+// --- CRUCIAL POUR VERCEL ---
+// On indique à Express qu'il est derrière un proxy (Vercel)
+// '1' signifie qu'on fait confiance au premier saut (hop)
+app.set("trust proxy", 1); 
 
-// Autorise les requêtes du frontend
-app.use(cors(
-  { origin: env.CLIENT_URL || "*",   // Supprimer l'étoile une fois test fini !!!
-    credentials: true
-  }
-));
-
-// Permet de lire le JSON dans les requêtes
+// ================== Middlewares de sécurité ================== //
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(cors({
+  origin: env.CLIENT_URL,
+  optionsSuccessStatus: 200
+}));
 app.use(express.json());
 
-// Protection contre les abus (50 requêtes max toutes les 15 minutes par IP)
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 50,
-  })
-);
+// ================== Configuration Rate Limit ================== //
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 50,
+  standardHeaders: true,
+  legacyHeaders: false,
+  // CETTE LIGNE EST LA SOLUTION :
+  validate: { 
+    trustProxy: false,
+    xForwardedForHeader: false,
+    forwardedHeader: false 
+  }, 
+  message: { error: "Trop de requêtes, réessayez plus tard" }
+});
+// Appliquer le limiteur global
+app.use(limiter);
 
+// ================== Routes ================== //
+// Note : Assurez-vous que 'authLimiter' est bien défini ou utilisez 'limiter'
+app.use('/api/auth', authRoutes); 
+app.use('/api/users', userRoutes);
 
-// Limiter les requetes par client
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 tentatives pour le moment, voir plus tard si plus ou moins 
-  message: {error: "Trop de tentative , réessayer plus tard!"}
-})
+app.get("/ip", (req, res) => {
+  res.send(req.ip); // Devrait maintenant afficher l'IP réelle de l'utilisateur, pas celle de Vercel
+});
 
-// Routes d'authentification
-app.use("/api/auth",authLimiter, authRoutes);
-
-// Routes pour les users
-app.use("/api/users",authLimiter, userRoutes);
-
-// Middleware global de gestion des erreurs (toujours en dernier)
 app.use(errorHandle);
 
-export default app; // Export pour server.js
+export default app;

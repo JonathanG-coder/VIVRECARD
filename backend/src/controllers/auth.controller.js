@@ -1,57 +1,50 @@
-import { userRepository } from "../repositories/user.repository.js";
-import { AuthService } from "../services/auth.service.js"; // Service métier pour l'authentification
+import { AuthService } from "../services/auth.service.js";
 
 export const AuthController = {
-  // Controller pour l'inscription utilisateur
+  // Création d’un utilisateur
   async register(req, res, next) {
     try {
-      // Récupération des données envoyées par le client
       const { email, password } = req.body;
 
-      // Appel du service d'inscription
+      // AuthService doit hasher le password et créer le user
       const userId = await AuthService.register(email, password);
 
-      // Réponse HTTP : utilisateur créé
+      // Réponse sécurisée, ne jamais renvoyer le password
       res.status(201).json({ userId });
     } catch (error) {
-      // Transmission de l'erreur au middleware global
-      next(error);
+      next(error); // Passe l'erreur au middleware global
     }
   },
 
-  // Controller pour la connexion utilisateur
+  // Login
   async login(req, res, next) {
     try {
-      // Récupération des données envoyées par le client
       const { email, password } = req.body;
 
-      // Appel du service de login
+      // AuthService doit vérifier mot de passe et générer JWT
       const token = await AuthService.login(email, password);
 
-      // Réponse HTTP : utilisateur connecté
+      // Ne pas exposer d’autres informations sensibles
       res.status(200).json({ token });
     } catch (error) {
-      // Gestion de l'erreur via middleware global
       next(error);
     }
   },
 
+  // Vérification de l’email via token
   async verifyEmail(req, res, next) {
     try {
-      // Récupère le token présent dans l'URL
       const { token } = req.params;
-      // Vérifie le token avec le service d'authentification
+
+      // AuthService vérifie le token et retourne l’utilisateur
       const user = await AuthService.verifyUser(token);
-      // Si le token est invalide ou expiré
+
       if (!user) {
-        return res.status(400).json({
-          message: "Token invalide ou expiré",
-        });
+        // Message générique pour éviter fuite d’information
+        return res.status(400).json({ message: "Token invalide ou expiré" });
       }
-      // Si la vérification réussit
-      res.status(200).json({
-        message: "Email vérifié avec succès",
-      });
+
+      res.status(200).json({ message: "Email vérifié avec succès" });
     } catch (error) {
       next(error);
     }

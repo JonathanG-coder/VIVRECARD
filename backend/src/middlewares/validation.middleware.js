@@ -1,19 +1,17 @@
-// Middleware qui valide les données envoyées avec un schema (ex: Zod)
-export const validate = (schema) => (req, res, next ) => {
+export const validate = (schema) => (req, res, next) => {
+  // Validation Zod
+  const result = schema.safeParse(req.body);
 
-    // Vérifie si les données du body respectent le schema
-    const result = schema.safeParse(req.body)
+  // Si validation échoue
+  if (!result.success) {
+    // Renvoi structuré des erreurs côté client
+    return res.status(400).json({
+      errors: result.error.flatten().fieldErrors, // erreurs par champ
+    });
+  }
 
-    // Si la validation échoue on renvoie les erreurs au client
-    if(!result.success){
-        return res.status(400).json({
-            errors : result.error.flatten().fieldErrors,
-        });
-    }
+  // Remplace req.body par les données validées et nettoyées
+  req.body = result.data;
 
-    // Remplace le body par les données validées et nettoyées
-    req.body = result.data;
-
-    // Passe au middleware ou controller suivant
-    next()
+  next(); // Passe au middleware suivant
 };

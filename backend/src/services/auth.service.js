@@ -1,72 +1,58 @@
-import argon2 from "argon2"; // Bibliothèque pour le hashing sécurisé des mots de passe
-import jwt from "jsonwebtoken"; // Génération des tokens JWT
-import crypto, { verify } from "crypto"; // Génération de valeurs aléatoires sécurisées
-import { env } from "../config/env.js"; // Variables d'environnement
-import { userRepository } from "../repositories/user.repository.js"; // Accès aux données utilisateur
-import { MailService } from "./mail.service.js"; // Service d'envoi d’emails
+import argon2 from "argon2";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import { v4 as uuid4 } from "uuid";
+import { env } from "../config/env.js";
+import { userRepository } from "../repositories/user.repository.js";
+ 
+import { MailService } from "./mail.service.js";
 
 export const AuthService = {
-  // Inscription utilisateur
+  // ================= INSCRIPTIOn ====================//
   async register(email, password) {
-    // Verifie si Email deja utilisé
-    const existing = await userRepository.findByEmail(email);
-    if (existing) {
-      throw new Error("Email déjà utilisé");
-    }
-
-    // Hash du mot de passe avec Argon2 (très sécurisé)
     const hashed = await argon2.hash(password);
+    //   const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verification_token = uuid4();
 
-    // Génération du token de vérification email
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    // Alternative possible :
-    // const verificationToken = uuid4();
-
-    // Création de l'utilisateur en base de données
     const userid = await userRepository.create({
       email,
       password: hashed,
-      verificationToken,
+      verification_token,
     });
 
-    // Envoi de l'email de vérification
-    await MailService.sendVerificationEmail(email, verificationToken);
+    // On envoie l'email de vérification
+
+    await MailService.sendVerificationEmail(email, verification_token);
 
     return userid;
   },
 
-  // Connexion utilisateur
+  // ========= LOGIN  ==============//
+
   async login(email, password) {
-    // Recherche de l'utilisateur par email
     const user = await userRepository.findByEmail(email);
 
-    // Si l'utilisateur n'existe pas
-    if (!user) throw new Error("L'utilisateur n'existe pas");
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
 
-    // Vérification du mot de passe
     const valid = await argon2.verify(user.password, password);
 
-    // Si le mot de passe est invalide
-    if (!valid) throw new Error("Email ou mot de passe incorrect");
+    if (!valid) {
+      throw new Error("Invalid credentials");
+    }
 
-    // Génération du JWT valide 7 jours
-    return jwt.sign(
-      {
-        id: user.id,
-      },
-      env.JWT_SECRET,
-      { expiresIn: "7d" },
-    );
+    return jwt.sign({ id: user.id }, env.JWT_SECRET, { expiresIn: "7d" });
   },
 
-  // Service qui vérifie si le token de vérification email existe en base
+  // vérifier l'utilisateur apres inscription
+
   async verifyUser(token) {
-    // Cherche l'utilisateur avec le token de vérification
-    const user = await userRepository.findByVerificationToken(token);
-    // Si aucun utilisateur n'est trouvé, on retourne null
+    const user = await userRepository.findByToken(token);
+
     if (!user) return null;
-    // Met à jour le statut de vérification de l'utilisateur
-    await userRepository.updateVerification(user.id);
+
+    await userRepository.UpdateVerification(user.id);
 
     return user;
   },

@@ -1,17 +1,20 @@
- // Middleware global de gestion des erreurs
 export const errorHandle = (err, req, res, next) => {
-    // Affiche l’erreur dans la console pour le debugging
-    console.error(err);
+  // Logging interne sécurisé
+  // Attention : ne pas loguer de données sensibles comme passwords ou tokens
+  console.error("Internal error:", err);
 
-    // Définit le statut HTTP (par défaut 500 si non défini)
-    const status = err.status || 500;
+  // Définition du status HTTP
+  const status = err.status || 500;
 
-    // Message d’erreur envoyé au client
-    const message = err.message || "Une erreur interne du serveur";
+  // Message générique pour éviter exposition de détails internes
+  const message =
+    err.message && process.env.NODE_ENV !== "production"
+      ? err.message
+      : "Une erreur serveur est survenue";
 
-    // Réponse JSON envoyée au frontend
-    res.status(status).json({
-        success: false,
-        message
-    });
+  // Réponse JSON structurée
+  res.status(status).json({
+    success: false,
+    message,
+  });
 };
