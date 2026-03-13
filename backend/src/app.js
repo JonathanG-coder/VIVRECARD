@@ -26,16 +26,16 @@ app.use(express.json());
 
 // ================== Configuration Rate Limit ================== //
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
+  windowMs: 15 * 60 * 1000,
   max: 50,
   standardHeaders: true,
   legacyHeaders: false,
-  // CETTE LIGNE EST LA SOLUTION :
-  validate: { 
-    trustProxy: false,
-    xForwardedForHeader: false,
-    forwardedHeader: false 
-  }, 
+
+  // IMPORTANT POUR VERCEL
+  keyGenerator: (req) => {
+    return req.ip;
+  },
+
   message: { error: "Trop de requêtes, réessayez plus tard" }
 });
 
