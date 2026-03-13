@@ -24,18 +24,17 @@ app.use(express.json());
 
 // ================== Configuration Rate Limit ================== //
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 50,
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  keyGenerator: (req) => {
+    return req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  },
   standardHeaders: true,
   legacyHeaders: false,
-  // CETTE LIGNE EST LA SOLUTION :
-  validate: { 
-    trustProxy: 1,
-    xForwardedForHeader: false,
-    forwardedHeader: false 
-  }, 
   message: { error: "Trop de requêtes, réessayez plus tard" }
 });
+
+
 // Appliquer le limiteur global
 app.use(limiter);
 
