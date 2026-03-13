@@ -31,9 +31,12 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 
-  // IMPORTANT POUR VERCEL
   keyGenerator: (req) => {
-    return req.ip;
+    return (
+      req.headers["x-forwarded-for"]?.split(",")[0] ||
+      req.socket?.remoteAddress ||
+      req.ip
+    );
   },
 
   message: { error: "Trop de requêtes, réessayez plus tard" }
