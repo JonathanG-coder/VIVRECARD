@@ -45,7 +45,7 @@ app.use(limiter);
 
 //Route test vercel
 app.get("/", (req, res) => {
-  res.send("<h1>🚀 VivreCard API running</h1>");
+  res.send("<h1>VivreCard API marche</h1>");
 });
 
 

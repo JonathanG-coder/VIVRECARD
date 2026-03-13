@@ -1,3 +1,6 @@
+//Garder server.js pour du local
+//Sur vercel utiliserr api/index.js
+
 import { env } from "./src/config/env.js";
 import app from "./src/app.js";
 
