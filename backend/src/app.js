@@ -6,6 +6,8 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.route.js";
 import { errorHandle } from "./middlewares/error.middleware.js";
 import { env } from "./config/env.js";
+import {authenticate} from "./middlewares/auth.middleware.js" 
+
 
 const app = express();
 
@@ -24,14 +26,16 @@ app.use(express.json());
 
 // ================== Configuration Rate Limit ================== //
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  keyGenerator: (req) => {
-    return req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  },
+  windowMs: 15 * 60 * 1000, 
+  max: 50,
   standardHeaders: true,
   legacyHeaders: false,
-  forwardedHeader: false,
+  // CETTE LIGNE EST LA SOLUTION :
+  validate: { 
+    trustProxy: false,
+    xForwardedForHeader: false,
+    forwardedHeader: false 
+  }, 
   message: { error: "Trop de requêtes, réessayez plus tard" }
 });
 
@@ -42,7 +46,7 @@ app.use(limiter);
 // ================== Routes ================== //
 // Note : Assurez-vous que 'authLimiter' est bien défini ou utilisez 'limiter'
 app.use('/api/auth', authRoutes); 
-app.use('/api/users', userRoutes);
+app.use('/api/users',authenticate, userRoutes);
 
 app.get("/ip", (req, res) => {
   res.send(req.ip); // Devrait maintenant afficher l'IP réelle de l'utilisateur, pas celle de Vercel
