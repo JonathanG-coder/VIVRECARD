@@ -43,10 +43,7 @@ const limiter = rateLimit({
 // Appliquer le limiteur global
 app.use(limiter);
 
-//Route test vercel
-app.get("/", (req, res) => {
-  res.send("<h1>VivreCard API marche</h1>");
-});
+
 
 
 // ================== Routes ================== //
