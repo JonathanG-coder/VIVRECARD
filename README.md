@@ -40,8 +40,6 @@
 
 
 
-
-
 BD : 
 
 CREATE DATABASE vivrecard_db;
@@ -61,3 +59,34 @@ CREATE TABLE users (
 );
 
 exit;
+
+
+
+vivre-card-app │ ├── app │ ├── index.js │ ├── login.js │ ├── register.js │ ├── map.js │ ├── profile.js │ └── logout.js │ ├── components │ ├── Button.js │ ├── InputField.js │ └── Loading.js │ ├── services │ ├── api.js │ ├── authService.js │ └── userService.js │ ├── store │ └── authStore.js │ ├── utils │ └── validation.js
+
+navigation
+//==========================================// npm install @react-navigation/native npm install @react-navigation/native-stack npm install @react-navigation/bottom-tabs
+
+//========================================//
+
+le projet
+//==========================================//
+
+npx expo install react-native-screens react-native-safe-area-context
+
+//==========================================//
+
+Les formulation
+//==========================================//
+
+npm install react-hook-form npm install zod npm install @hookform/resolvers
+
+//==========================================//
+
+API
+//==========================================// npm install axios ou yarn add axios //==========================================//
+
+State management ### (equivalent UseContext || redux)
+//==========================================//
+
+npm install zustand
