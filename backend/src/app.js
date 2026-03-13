@@ -30,7 +30,7 @@ const limiter = rateLimit({
   legacyHeaders: false,
   // CETTE LIGNE EST LA SOLUTION :
   validate: { 
-    trustProxy: false,
+    trustProxy: 1,
     xForwardedForHeader: false,
     forwardedHeader: false 
   }, 
