@@ -31,6 +31,7 @@ const limiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  forwardedHeader: false,
   message: { error: "Trop de requêtes, réessayez plus tard" }
 });
 
