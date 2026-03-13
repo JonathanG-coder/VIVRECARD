@@ -2,12 +2,12 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import authRoutes from "./routes/auth.routes.js";
+import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import { errorHandle } from "./middlewares/error.middleware.js";
 import { env } from "./config/env.js";
-import {authenticate} from "./middlewares/auth.middleware.js" 
 
+import {authenticate} from "./middlewares/auth.middleware.js" 
 
 const app = express();
 
@@ -26,36 +26,25 @@ app.use(express.json());
 
 // ================== Configuration Rate Limit ================== //
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 15 * 60 * 1000, 
   max: 50,
   standardHeaders: true,
   legacyHeaders: false,
-
-  keyGenerator: (req) => {
-    return (
-      req.headers["x-forwarded-for"]?.split(",")[0] ||
-      req.socket?.remoteAddress ||
-      req.ip
-    );
-  },
-
+  // CETTE LIGNE EST LA SOLUTION :
+  validate: { 
+    trustProxy: false,
+    xForwardedForHeader: false,
+    forwardedHeader: false 
+  }, 
   message: { error: "Trop de requêtes, réessayez plus tard" }
 });
-
-
 // Appliquer le limiteur global
 app.use(limiter);
-
-
-// Route test 
-app.get("/", (req, res) => {
-  res.send("VivreCard API running");
-});
 
 // ================== Routes ================== //
 // Note : Assurez-vous que 'authLimiter' est bien défini ou utilisez 'limiter'
 app.use('/api/auth', authRoutes); 
-app.use('/api/users',authenticate, userRoutes);
+app.use('/api/users',authenticate,  userRoutes);
 
 app.get("/ip", (req, res) => {
   res.send(req.ip); // Devrait maintenant afficher l'IP réelle de l'utilisateur, pas celle de Vercel
