@@ -6,6 +6,11 @@ import { loginSchema, registrationSchema } from "../validation/auth.validation.j
 
 const router = Router()
 
+//Route de test pour voir si vercel marche
+router.get('/test', (req, res) => {
+  res.json({ message: "Auth API works" });
+});
+
 router.post('/register',validate(registrationSchema), AuthController.register)
 
 router.post('/login',validate(loginSchema), AuthController.login)
