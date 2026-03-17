@@ -90,3 +90,7 @@ State management ### (equivalent UseContext || redux)
 //==========================================//
 
 npm install zustand
+
+
+//=============================================//
+Pour lancer front : npx expo start --tunnel
