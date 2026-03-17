@@ -1,4 +1,4 @@
-import { Text,Alert,KeyboardAvoidingView,TouchableOpacity} from "react-native";
+import { Text,Alert,KeyboardAvoidingView,TouchableOpacity, Platform, View} from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -7,11 +7,16 @@ import { registrationSchema } from "../utils/validation";
 import { InputField } from "../components/InputField";
 import { Button } from "../components/Button";
 import { authService } from "../services/authService";
+import Logo from "../components/Logo";
+import Loading from "../components/Loading";
+
+
 
 const Register = ({ navigation }) => {
 
   const [passwordShow, setPasswordShow] = useState(true) // permet d'afficher ou cacher le mot de passe.
   const [hidePasswordShow, setHidePasswordShow] = useState(true)
+  const [loading, setLoading] = useState(false);
 
   const { control, handleSubmit,formState: { errors }, } = useForm({
     resolver: zodResolver(registrationSchema),
@@ -19,6 +24,7 @@ const Register = ({ navigation }) => {
 
   const onSubmit = async (data) => {
     try {
+      setLoading(true);
       await authService.register(data);
       Alert.alert("Succès", "Compte créé");
       navigation.navigate("Login");
@@ -26,13 +32,22 @@ const Register = ({ navigation }) => {
       const message = error.response?.data.message || "Inscription impossible (vérifié API)"
 
       Alert.alert("Erreur", message);
-    }
+    }  finally {
+    setLoading(false);
+  }
   };
 
   return (
-    <KeyboardAvoidingView behavior="padding"
+    <>
+        {loading ? (
+      <Loading />
+    ) : (
+
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1, justifyContent: "center", padding: 20 }}
     >
+      <Logo/>
       {/* Le champ EMAIL */}
       <Controller
         control={control}
@@ -55,6 +70,7 @@ const Register = ({ navigation }) => {
         control={control}
         name="password"
         render={({ field: { onChange, value } }) => (
+          <View style={{ position: "relative" }}>
           <InputField
             placeholder="Mot de passe"
             secureTextEntry={passwordShow}
@@ -65,12 +81,17 @@ const Register = ({ navigation }) => {
             autoComplete="password"
             textContentType="password"
           />
+          <TouchableOpacity style={{position: "absolute", right:6, top:8}}
+                  onPress={() => setPasswordShow(!passwordShow)}
+                >
+                  <Text style={{ fontSize: 15 }}>
+                    {passwordShow ? "Show" : "Hide"}
+                  </Text>
+                </TouchableOpacity>
+          </View>
         )}
       />
-      {/* Permet de visible ou non visible le mot de passe */}
-      <TouchableOpacity onPress={() => setPasswordShow (!passwordShow)}>
-      <Text style={{fontSize: 15 }}>{passwordShow ? "Show" : "Hide" }</Text>
-      </TouchableOpacity> 
+
 
 
 
@@ -79,21 +100,26 @@ const Register = ({ navigation }) => {
         control={control}
         name="confirmPassword"
         render={({ field: { onChange, value } }) => (
+          <View style={{ position: "relative" }}>
           <InputField
             placeholder="Confirmer mot de passe"
-            secureTextEntry
+            secureTextEntry={hidePasswordShow}
             value={value}
             onChangeText={onChange}
             error={errors.confirmPassword?.message}
             autoCapitalize="none"
             textContentType="password"
           />
+          <TouchableOpacity style={{position: "absolute", right:6, top:8}}
+                  onPress={() => setHidePasswordShow(!hidePasswordShow)}
+                >
+                  <Text style={{ fontSize: 15 }}>
+                    {hidePasswordShow? "Show" : "Hide"}
+                  </Text>
+                </TouchableOpacity>
+          </View>
         )}
       />
-       {/* Permet de visible ou non visible le confirm mot de passe */}
-      <TouchableOpacity onPress={() => setHidePasswordShow (!hidePasswordShow)}>
-      <Text style={{fontSize: 15 }}>{hidePasswordShow ? "Show" : "Hide" }</Text>
-      </TouchableOpacity> 
 
 
       {/* Bouton pour valider l'enregistrement */}
@@ -106,7 +132,10 @@ const Register = ({ navigation }) => {
         </Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
-  );
+    )}
+  </>
+
+);
 }
 
 export default Register
