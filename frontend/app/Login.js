@@ -1,21 +1,26 @@
-import {Text,Alert,KeyboardAvoidingView,TouchableOpacity,Platform,View,} from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { loginSchema } from "../utils/validation";
-import Profile from "./Profile";
-import Loading from "../components/Loading";
-import { InputField } from "../components/InputField";
-import { Button } from "../components/Button";
+import InputField from "../components/InputField";
+import Button from "../components/Button";
 import { authService } from "../services/authService";
+import { useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import Logo from "../components/Logo";
 
 const Login = ({ navigation }) => {
   const { setToken } = useAuthStore();
 
-  const [passwordShow, setPasswordShow] = useState(true); // permet d'afficher ou cacher le mot de passe.
-  const [loading, setLoading] = useState(false);
+  const [passwordShow, setPasswordShow] = useState(true);
 
   const {
     control,
@@ -27,91 +32,94 @@ const Login = ({ navigation }) => {
 
   const onSubmit = async (data) => {
     try {
-      setLoading(true);
       const token = await authService.login(data);
       await setToken(token, data);
-
-      Alert.alert("Succès", "Login valid");
-      navigation.navigate("Profile");
+ 
+      navigation.navigate("Map");
     } catch (error) {
       const message =
-        error.response?.data.message || "Inscription impossible (vérifié API)";
+        error.response?.data.message ||
+        "Inscription impossible  (vérifie ton api )";
 
-      Alert.alert("Erreur", message);
-    } finally {
-      setLoading(false);
+      Alert.alert("Erreur serveur", message);
     }
   };
 
   return (
-    <>
-      {loading ? (
-        <Loading />
-      ) : (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1, justifyContent: "center", padding: 20 }}
-        >
-          <Logo />
-          {/* Le champ EMAIL */}
-          <Controller
-            control={control}
-            name="email"
-            render={({ field: { onChange, value } }) => (
-              <InputField
-                placeholder="Email"
-                value={value}
-                onChangeText={onChange}
-                error={errors.email?.message}
-                autoCapitalize="none" // ne met pas de majuscule automatiquement
-                textContentType="emailAddress" // iOS : aide le remplissage automatique
-                autoComplete="email" // Android : remplissage automatique
-                keyboardType="email-address" // clavier adapté avec @ et .com
-              />
-            )}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+      style={{ flex: 1, justifyContent: "center", padding: 15 }}
+    >
+        <Logo />
+      {/* Le champ email  */}
+  <Controller
+        control={control}
+        name="email"
+        render={({ field: { onChange, value } }) => (
+          <InputField
+            placeholder="Email"
+            value={value}
+            onChangeText={onChange}
+            error={errors.email?.message}
+            // Optimisations clavier pour l'email :
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              textContentType="emailAddress"
+              autoComplete="email"
           />
-          {/* Le champ mot de passe */}
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, value } }) => (
-              <View style={{ position: "relative" }}>
-                <InputField
-                  placeholder="Mot de passe"
-                  secureTextEntry={passwordShow}
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.password?.message}
-                  autoCapitalize="none"
-                  autoComplete="password"
-                  textContentType="password"
-                />
-                <TouchableOpacity style={{position: "absolute", right:6, top:8}}
-                  onPress={() => setPasswordShow(!passwordShow)}
-                >
-                  <Text style={{ fontSize: 15 }}>
-                    {passwordShow ? "Show" : "Hide"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
+        )}
+      />
+
+
+  
+
+      {/* Le champ password  */}
+      <Controller
+        control={control}
+        name="password"
+        render={({ field: { onChange, value } }) => (
+          <InputField
+            placeholder="Mot de passe"
+            value={value}
+            onChangeText={onChange}
+            error={errors.password?.message}
+            autoCapitalise="none"
+            autoComplete="password"
+            textContentType="password"
+            secureTextEntry={passwordShow}
           />
+        )}
+      />
 
-          {/* Bouton pour valider le login */}
-          <Button title="Se login" onPress={handleSubmit(onSubmit)} />
+      <TouchableOpacity onPress={() => setPasswordShow(!passwordShow)}>
+        <Text style={{ fontSize: 15 }}>{passwordShow ? "Show" : "Hide"}</Text>
+      </TouchableOpacity>
 
-          {/* Lien vers Register si j'ai pas un compte*/}
-          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text
-              style={{ color: "#1d4098", textAlign: "center", marginTop: 20 }}
-            >
-              Pas encore de compte ? Inscrivez-vous
-            </Text>
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
-      )}
-    </>
+      <Button title="Se connecter" onPress={handleSubmit(onSubmit)} />
+
+      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+        <Text style={{ color: "#1b3794", textAlign: "center", marginTop: 10 }}>
+          Je n'ai pas de compte ? Inscrivez vous
+        </Text>
+      </TouchableOpacity>
+    </KeyboardAvoidingView>
   );
 };
 
 export default Login;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 10,
+  },
+  touchable: {
+    position: "absolute",
+    right: 6,
+    top: 8,
+  },
+  text: { fontSize: 12, left: 0 },
+  faded: { color: "gray", textAlign: "center", marginTop: 10 },
+  });
