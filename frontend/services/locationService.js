@@ -6,4 +6,10 @@ export const locationService = {
 
     return response.data;
   },
+
+  //On va récuperer users actif
+  getActiveUsers: async () => {
+    const response = await api.get("/users/active");
+    return response.data;
+  },
 };

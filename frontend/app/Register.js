@@ -1,54 +1,55 @@
-import { Text,Alert,KeyboardAvoidingView,TouchableOpacity, Platform, View} from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { registrationSchema } from "../utils/validation";
-
-import { InputField } from "../components/InputField";
-import { Button } from "../components/Button";
+import { registerSchema } from "../utils/validation";
+import InputField from "../components/InputField";
+import Button from "../components/Button";
 import { authService } from "../services/authService";
+import { useState } from "react";
 import Logo from "../components/Logo";
-import Loading from "../components/Loading";
-
-
 
 const Register = ({ navigation }) => {
+  const [passwordShow, setPasswordShow] = useState(true);
+  const [hidePassword, setHidePassword] = useState(true);
 
-  const [passwordShow, setPasswordShow] = useState(true) // permet d'afficher ou cacher le mot de passe.
-  const [hidePasswordShow, setHidePasswordShow] = useState(true)
-  const [loading, setLoading] = useState(false);
-
-  const { control, handleSubmit,formState: { errors }, } = useForm({
-    resolver: zodResolver(registrationSchema),
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(registerSchema),
   });
 
   const onSubmit = async (data) => {
     try {
-      setLoading(true);
       await authService.register(data);
-      Alert.alert("Succès", "Compte créé");
+      Alert.alert("success ", "Compte créé");
       navigation.navigate("Login");
     } catch (error) {
-      const message = error.response?.data.message || "Inscription impossible (vérifié API)"
+      const message =
+        error.response?.data.message ||
+        "Inscription impossible  (vérifie ton api )";
 
-      Alert.alert("Erreur", message);
-    }  finally {
-    setLoading(false);
-  }
+      Alert.alert("Erreur serveur", message);
+    }
   };
 
   return (
-    <>
-        {loading ? (
-      <Loading />
-    ) : (
-
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1, justifyContent: "center", padding: 20 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+      style={{ flex: 1, justifyContent: "center", padding: 15 }}
     >
-      <Logo/>
-      {/* Le champ EMAIL */}
+
+      <Logo />
+      {/* Le champ email  */}
       <Controller
         control={control}
         name="email"
@@ -58,84 +59,72 @@ const Register = ({ navigation }) => {
             value={value}
             onChangeText={onChange}
             error={errors.email?.message}
-            autoCapitalize="none" // ne met pas de majuscule automatiquement
-            textContentType="emailAddress" // iOS : aide le remplissage automatique
-            autoComplete="email" // Android : remplissage automatique
-            keyboardType="email-address" // clavier adapté avec @ et .com
+            autoCapitalise="none"
+            autoComplete="email"
+            textContentType="emailAddress"
+            keyboardType="email-address"
+             
           />
         )}
       />
-      {/* Le champ mot de passe */}
+
+      {/* Le champ password  */}
       <Controller
         control={control}
         name="password"
         render={({ field: { onChange, value } }) => (
-          <View style={{ position: "relative" }}>
+          <View style={{position: "relative" }}>
           <InputField
             placeholder="Mot de passe"
-            secureTextEntry={passwordShow}
             value={value}
             onChangeText={onChange}
             error={errors.password?.message}
-            autoCapitalize="none"
+            autoCapitalise="none"
             autoComplete="password"
             textContentType="password"
-          />
-          <TouchableOpacity style={{position: "absolute", right:6, top:8}}
-                  onPress={() => setPasswordShow(!passwordShow)}
-                >
-                  <Text style={{ fontSize: 15 }}>
-                    {passwordShow ? "Show" : "Hide"}
-                  </Text>
-                </TouchableOpacity>
-          </View>
+            secureTextEntry={hidePassword}
+            />
+           <TouchableOpacity onPress={() => setPasswordShow(!hidePassword)}>
+        <Text style={{ fontSize: 15 ,position: "absolute",  right: 20 }}>{passwordShow ? "Show" : "Hide"}</Text>
+      </TouchableOpacity>
+
+            </View>
         )}
       />
 
-
-
-
-      {/* Le champ CONFIRMER MOT DE PASSE */}
+     
+      {/* Le champ password  */}
       <Controller
         control={control}
         name="confirmPassword"
         render={({ field: { onChange, value } }) => (
-          <View style={{ position: "relative" }}>
           <InputField
-            placeholder="Confirmer mot de passe"
-            secureTextEntry={hidePasswordShow}
+            placeholder="Confirmer Mot de passe"
             value={value}
             onChangeText={onChange}
-            error={errors.confirmPassword?.message}
-            autoCapitalize="none"
-            textContentType="password"
+            error={errors.password?.message}
+            autoCapitalise="none"
+            autoComplete="new-password"
+            textContentType="newPassword"
+            secureTextEntry={hidePassword}
+            autoCorrect="new-password"
+          
           />
-          <TouchableOpacity style={{position: "absolute", right:6, top:8}}
-                  onPress={() => setHidePasswordShow(!hidePasswordShow)}
-                >
-                  <Text style={{ fontSize: 15 }}>
-                    {hidePasswordShow? "Show" : "Hide"}
-                  </Text>
-                </TouchableOpacity>
-          </View>
         )}
       />
+      <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
+        <Text style={{ fontSize: 15 }}>{hidePassword ? "Show" : "Hide"}</Text>
+      </TouchableOpacity>
 
-
-      {/* Bouton pour valider l'enregistrement */}
       <Button title="Créer un compte" onPress={handleSubmit(onSubmit)} />
 
-      {/* Lien vers Login si j'ai déjà un compte*/}
       <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-        <Text style={{ color: "#1d4098", textAlign: "center", marginTop: 20 }}>
-          J'ai déjà un compte ? Connectez-vous
-        </Text>
+        <Text style={{color:  "#1b3794", textAlign:"center", marginTop :10}}>J'ai déja un compte ? Connectez vous</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
-    )}
-  </>
+  );
+};
 
-);
-}
+export default Register;
 
-export default Register
+const styles = StyleSheet.create({});
