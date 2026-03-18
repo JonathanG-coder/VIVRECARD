@@ -75,23 +75,31 @@ const Login = ({ navigation }) => {
       <Controller
         control={control}
         name="password"
-        render={({ field: { onChange, value } }) => (
-          <InputField
-            placeholder="Mot de passe"
-            value={value}
-            onChangeText={onChange}
-            error={errors.password?.message}
-            autoCapitalise="none"
-            autoComplete="password"
-            textContentType="password"
-            secureTextEntry={passwordShow}
-          />
-        )}
-      />
-
-      <TouchableOpacity onPress={() => setPasswordShow(!passwordShow)}>
-        <Text style={{ fontSize: 15 }}>{passwordShow ? "Show" : "Hide"}</Text>
-      </TouchableOpacity>
+        render={({ field: { onChange, value } }) => {
+          return (
+            <View style={{ position: "relative" }}>
+              <InputField
+                placeholder="Mot de passe"
+                value={value}
+                onChangeText={onChange}
+                error={errors.password?.message}
+                autoCapitalise="none"
+                autoComplete="password"
+                textContentType="password"
+                secureTextEntry={passwordShow}
+              ></InputField>
+              <TouchableOpacity
+                style={styles.touchable}
+                onPress={() => setPasswordShow(!passwordShow)}
+              >
+                <Text style={styles.text}>
+                  {passwordShow ? "Show" : "Hide"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          );
+        }}
+      ></Controller>
 
       <Button title="Se connecter" onPress={handleSubmit(onSubmit)} />
 
