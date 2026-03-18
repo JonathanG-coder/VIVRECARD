@@ -1,0 +1,37 @@
+[33md05e3a6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Map
+[33m8aaafb1[m Password visible et not visible
+[33m968e105[m Integration Front-end Register, Login et page Profile
+[33m9c4bd08[m route par defaut
+[33m335ae8c[m route
+[33m0267aba[m Reinit
+[33m5220d62[m Remis rate limit
+[33m6bd871e[m ratelimit
+[33m4ead501[m[33m ([m[1;32mdev[m[33m)[m Vercel
+[33mbafc991[m[33m ([m[1;31morigin/dev[m[33m)[m .
+[33m89116b9[m .
+[33md8d2235[m vercel
+[33m5129b47[m Vercel
+[33m69a5014[m API
+[33m5d70248[m .
+[33me524c79[m .
+[33meffd3df[m authenticate
+[33mdb4ea2c[m proxy
+[33md33bf13[m proxy
+[33m9bf02dd[m trustProxy : 1 , avant sur false
+[33mfb0da50[m Route
+[33m1ae715a[m Lien VERCEL .json
+[33mc650d10[m test vercel
+[33m099c9c7[m TEst simple vercel
+[33m7748ea2[m README
+[33m1ddea87[m Modification
+[33m07283a1[m Verification email
+[33m3efc77d[m verify par token
+[33mb4683e1[m Integration validation Joi et localisation user
+[33m46f6709[m Ajout si email deja utilisé
+[33mc586d13[m Mise sous commentaire
+[33m98f3dff[m .
+[33mcf79219[m .
+[33mfc09f00[m Auth
+[33m4208df5[m SMTP BREVO
+[33m55fc1df[m Start Projet
+[33md2b6246[m Initial commit
