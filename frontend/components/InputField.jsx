@@ -2,7 +2,7 @@ import { View, TextInput, Text, StyleSheet } from "react-native";
 
 // Fiels ou champs réutilisable d'un formulaire
 
-export function InputField({
+const InputField = ({
   value,
   onChangeText,
   placeholder,
@@ -12,7 +12,7 @@ export function InputField({
   autoComplete,
   textContentType,
   keyboardType
-}) {
+}) => {
   return (
     <View style={styles.container}>
       <TextInput
@@ -31,6 +31,7 @@ export function InputField({
     </View>
   );
 }
+export default InputField
 
 const styles = StyleSheet.create({
   container: {

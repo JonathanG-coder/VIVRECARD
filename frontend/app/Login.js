@@ -34,7 +34,7 @@ const Login = ({ navigation }) => {
     try {
       const token = await authService.login(data);
       await setToken(token, data);
- 
+
       navigation.navigate("Map");
     } catch (error) {
       const message =
@@ -47,12 +47,12 @@ const Login = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1, justifyContent: "center", padding: 15 }}
     >
-        <Logo />
+      <Logo />
       {/* Le champ email  */}
-  <Controller
+      <Controller
         control={control}
         name="email"
         render={({ field: { onChange, value } }) => (
@@ -62,17 +62,14 @@ const Login = ({ navigation }) => {
             onChangeText={onChange}
             error={errors.email?.message}
             // Optimisations clavier pour l'email :
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              textContentType="emailAddress"
-              autoComplete="email"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            textContentType="emailAddress"
+            autoComplete="email"
           />
         )}
       />
-
-
-  
 
       {/* Le champ password  */}
       <Controller
@@ -122,4 +119,4 @@ const styles = StyleSheet.create({
   },
   text: { fontSize: 12, left: 0 },
   faded: { color: "gray", textAlign: "center", marginTop: 10 },
-  });
+});

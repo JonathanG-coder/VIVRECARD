@@ -1,6 +1,6 @@
 import { Pressable, Text, StyleSheet } from 'react-native'
  
-export const Button = ({title, onPress}) => {
+ const Button = ({title, onPress}) => {
   return (
     <Pressable style={styles.button} onPress={onPress} >
       <Text style={styles.text}>
@@ -9,6 +9,7 @@ export const Button = ({title, onPress}) => {
     </Pressable>
   )
 }
+export default Button
 
 const styles = StyleSheet.create({
     button: {

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "../utils/validation";
+import { registrationSchema } from "../utils/validation";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
 import { authService } from "../services/authService";
@@ -25,7 +25,7 @@ const Register = ({ navigation }) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(registrationSchema),
   });
 
   const onSubmit = async (data) => {
@@ -93,7 +93,7 @@ const Register = ({ navigation }) => {
       />
 
      
-      {/* Le champ password  */}
+      {/* Le champ comfirmpassword  */}
       <Controller
         control={control}
         name="confirmPassword"
