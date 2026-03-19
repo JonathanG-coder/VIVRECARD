@@ -95,5 +95,19 @@ npm install zustand
 //=============================================//
 Pour lancer front : npx expo start --tunnel
 
-S'inscrire sure Expo.dev  pour builder le front pour faire une APK. Cela va me donner une clef.
-Voir comment s'ecris la cmomande terminal pour builder.
+
+
+//===============================================//
+Pour builder le projet : 
+ALler sur Expo.dev et me logger.
+Cliquer sur New project ou selectionner un projet deja créer
+ligne de commande pour init un new projet, aller sur le dossier fornt du projet et ecrire  :
+
+ eas build -p android -- profil preview
+
+ensuite mettre la ligne de code que Expo me donne , dans ce projet ca donne ca : 
+eas init --id 6e112c65-7c27-4cf8-a218-f71db57c3000
+
+Ensuite tous valider par default.
+
+une fois terminal terminer, retourner sur Expo, aller dans le projet et installer l'APK, il se telechargera sur le PC et ensuite le mettre sur telephone.

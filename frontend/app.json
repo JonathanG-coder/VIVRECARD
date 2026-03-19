@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "6e112c65-7c27-4cf8-a218-f71db57c3000"
+      }
+    },
+    "owner": "jondev64",
+    "slug": "vivre-card",
+    "android": {
+      "package": "com.jondev64.vivrecard"
+    }
+  }
+}
