@@ -94,3 +94,6 @@ npm install zustand
 
 //=============================================//
 Pour lancer front : npx expo start --tunnel
+
+S'inscrire sure Expo.dev  pour builder le front pour faire une APK. Cela va me donner une clef.
+Voir comment s'ecris la cmomande terminal pour builder.
